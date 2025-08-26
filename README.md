@@ -88,6 +88,13 @@ This project and its contained wallpapers are licensed under the Creative Common
 
 Check also [this link](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
+## Screenshots
+
+<div align="center">
+	<img width="820" height="359" alt="image" src="https://github.com/user-attachments/assets/2107eb11-4a83-4b28-a119-fd4a44e78e47" />
+	<img width="820" height="581" alt="image" src="https://github.com/user-attachments/assets/1bfe00c8-06ec-46eb-a55c-32f6cc814fc5" />
+</div>
+
 ## Acknowledgements
 
  - [Whatsmeow library for Golang](https://github.com/tulir/whatsmeow)
