@@ -84,7 +84,7 @@ Whatsapp-Summarizer/
 ```
 ## License
 
-This project and its contained wallpapers are licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License - see the [LICENSE](LICENSE) file for details.
 
 Check also [this link](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
