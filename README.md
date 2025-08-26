@@ -4,6 +4,8 @@
 So, my friends talk a lot in the group, but A LOT, and pretty often I find 200+ unread messages, so I got tired of it and decided to make a bot to summarize the chat. I made one in JS using whatsapp-web.js, but there are not enough words in english nor spanish to express my eternal hate to nodeJS, and after investigating a little more, found whatsmeow!
 
 So yeah, this is a new one, but better, and in Go
+<img width="1186" height="643" alt="image" src="https://github.com/user-attachments/assets/2e2e8abc-12f7-450d-bd3e-12a42b65860f" />
+
 
 ## Features
 
