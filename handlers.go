@@ -25,33 +25,47 @@ func eventHandler(evt interface{}, client *whatsmeow.Client) {
 		messageType := "text"
 
 		// * Determine message type
-		if v.Message.GetConversation() != "" {
+		if v.Message.GetConversation() != "" { // ! If it's a normal text message
 			messageType = "text"
-		} else if v.Message.GetImageMessage() != nil {
+		} else if v.Message.GetExtendedTextMessage() != nil { // ! If it's an extended text message
+
+			// ! NOTE, an extended text message is a message that has more info than a normal text message
+			// ! Stuff like quoted messages, mentions in messages, link messages with preview (if they don't have preview it's a normal message)
+			// ! In summary, any other thing that has more stuff than plain text is an extended text message
+			messageType = "extended_text"
+
+			if v.Message.GetExtendedTextMessage().GetContextInfo().GetQuotedMessage() != nil {
+				message = "[Quote Message] " + v.Message.GetExtendedTextMessage().GetText() + " [Answering to] '" + getMessageConversation(v.Message.GetExtendedTextMessage().GetContextInfo().GetQuotedMessage()) + "'"
+			} else {
+				message = "[Extended Text Message] " + v.Message.GetExtendedTextMessage().GetText()
+			}
+
+			fmt.Println("Extended Text Message: ", message)
+		} else if v.Message.GetImageMessage() != nil { // ! If it's an image message
 			messageType = "image"
-			message = "[Image Message]"
-		} else if v.Message.GetVideoMessage() != nil {
+			message = "[Image Message] " + getMessageConversation(v.Message)
+		} else if v.Message.GetVideoMessage() != nil { // ! If it's a video message
 			messageType = "video"
-			message = "[Video Message]"
-		} else if v.Message.GetAudioMessage() != nil {
+			message = "[Video Message] " + getMessageConversation(v.Message)
+		} else if v.Message.GetAudioMessage() != nil { // ! If it's an audio message
 			messageType = "audio"
 			message = "[Audio Message]"
-		} else if v.Message.GetDocumentMessage() != nil {
+		} else if v.Message.GetDocumentMessage() != nil { // ! If it's a document message
 			messageType = "document"
-			message = "[Document Message]"
-		} else if v.Message.GetStickerMessage() != nil {
+			message = "[Document Message] " + getMessageConversation(v.Message)
+		} else if v.Message.GetStickerMessage() != nil { // ! If it's a sticker message
 			messageType = "sticker"
 			message = "[Sticker Message]"
-		} else if v.Message.GetReactionMessage() != nil {
+		} else if v.Message.GetReactionMessage() != nil { // ! If it's a reaction message
 			messageType = "reaction"
-			message = "[Reaction Message]"
-		} else if v.Message.GetViewOnceMessage() != nil {
+			message = "[Reaction Message] " + getMessageConversation(v.Message) + " [Reacted to an unknown message]"
+		} else if v.Message.GetViewOnceMessage() != nil { // ! If it's a view once message
 			messageType = "view_once"
 			message = "[View Once Message]"
-		} else if v.Message.GetLiveLocationMessage() != nil {
+		} else if v.Message.GetLiveLocationMessage() != nil { // ! If it's a live location message
 			messageType = "live_location"
 			message = "[Live Location Message]"
-		} else if v.Message.GetLocationMessage() != nil {
+		} else if v.Message.GetLocationMessage() != nil { // ! If it's a location message
 			messageType = "location"
 			message = "[Location Message]"
 		} else {
@@ -112,7 +126,8 @@ func eventHandler(evt interface{}, client *whatsmeow.Client) {
 		}
 
 		// * Handle summarize command
-		words := strings.Split(v.Message.GetConversation(), " ")
+		lowerCaseMessage := strings.ToLower(v.Message.GetConversation())
+		words := strings.Split(lowerCaseMessage, " ")
 
 		// * Handle summarize command
 		if words[0] == "--summarize" || words[0] == "-s" {
@@ -146,14 +161,19 @@ func eventHandler(evt interface{}, client *whatsmeow.Client) {
 func handleVersionCommand(client *whatsmeow.Client, chat types.JID) {
 	client.SendMessage(context.Background(), chat, &waE2E.Message{
 		Conversation: proto.String(
-			"*Bot version 3.0.0!*\n" +
+			"*Bot version 3.0.1!*\n" +
 				"Bot is now running on Go! Quicker, more stable and more efficient!\n" +
 				"Now it responds with a message while processing the request, then it edits it with the result!\n" +
 				"\n" +
 				"*Future updates:* \n" +
-				"- Add support for direct messages (I still don't if this is a good idea)\n" +
+				"- Add support for direct messages (I still don't know if this is a good idea)\n" +
 				"- Add support for group messages (Make bancho a part of the group!)\n" +
 				"- Add support for media messages (Image recognition, Speech to text for audio messages, etc. So it can understand even more!)\n" +
+				"\n" +
+				"*Patch Notes:* \n" +
+				"- Fix typo in version command\n" +
+				"- Fix some message types not being read correctly\n" +
+				"- Fix some commands being case sensitive\n" +
 				"\n" +
 				"Check out the code: https://github.com/Civermau/Whatsapp-Summarizer-Bot-Go-Edition\n" +
 				"Also check out my website: https://civermau.dev",
@@ -241,7 +261,7 @@ func handleSummarizeCommand(client *whatsmeow.Client, chat types.JID, opts Summa
 		groupName = groupInfo.Name
 	}
 
-	sendMessageToOwner(client, pushName+" requested to summarize "+strconv.Itoa(opts.Count)+" messages in "+groupName)
+	sendMessageToOwner(client, pushName+" requested a "+opts.Style+" summary of "+strconv.Itoa(opts.Count)+" messages in "+groupName)
 	summarizeMessages(client, chat, msgID.ID, opts)
 }
 

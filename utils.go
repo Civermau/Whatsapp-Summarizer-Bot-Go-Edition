@@ -68,3 +68,36 @@ func sendMessageToOwner(client *whatsmeow.Client, message string) {
 		Conversation: proto.String(message),
 	})
 }
+
+func getMessageConversation(message *waE2E.Message) string {
+	if message.GetConversation() != "" {
+		return message.GetConversation()
+	}
+
+	if message.GetExtendedTextMessage() != nil {
+		return message.GetExtendedTextMessage().GetContextInfo().GetQuotedMessage().GetConversation()
+	}
+
+	if message.GetImageMessage() != nil {
+		if message.GetImageMessage().GetCaption() != "" {
+			return message.GetImageMessage().GetCaption()
+		}
+	}
+
+	if message.GetVideoMessage() != nil {
+		if message.GetVideoMessage().GetCaption() != "" {
+			return message.GetVideoMessage().GetCaption()
+		}
+	}
+
+	if message.GetDocumentMessage() != nil {
+		if message.GetDocumentMessage().GetCaption() != "" {
+			return message.GetDocumentMessage().GetCaption()
+		}
+	}
+
+	if message.GetReactionMessage() != nil {
+		return message.GetReactionMessage().GetText()
+	}
+	return "[Does not have text]"
+}
